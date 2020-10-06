@@ -1,0 +1,23 @@
+Настройка PyCharm
+https://py-charm.blogspot.com/2017/09/blog-post.html
+https://coderlessons.com/tutorials/python-technologies/uznaite-pycharm/pycharm-kratkoe-rukovodstvo
+
+Настройка GitHub
+https://docs.google.com/document/d/1RAT_ukE39iOfbz1xa39QXae2hBUEZ4U6Fko_wFDdrsM/edit#
+
+Горячие клавиши
+https://resources.jetbrains.com/storage/products/pycharm/docs/PyCharm_ReferenceCard.pdf
+http://dev-tricks.ru/2016/10/20/goryachie-klavishi-pycharm/
+
+Документация
+https://www.programiz.com
+https://docs.python.org/3/index.html
+
+Визуализатор
+http://www.pythontutor.com/visualize.html#mode=edit
+
+Экранированные последовательности
+https://pyprog.pro/python/py/str/esqape_sec.html
+
+Книги
+https://codernet.ru/books/python/izuchaem_python_5-e_izd_tom_1_mark_lutc/
