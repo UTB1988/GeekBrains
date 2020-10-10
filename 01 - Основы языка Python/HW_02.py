@@ -1,7 +1,4 @@
 #Pull request
-#Pull request
-#Pull request
-#Pull request
 
 print()
 print('--- --- Task 1 --- ---')
