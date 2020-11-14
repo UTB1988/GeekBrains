@@ -89,15 +89,18 @@ print()
 # - Фильтр, чтобы поймать состояние есть и его нужно использовать
 
 
+class MyTrueDivError(Exception):
+    def __init__(self, txt):
+        self.txt = txt
+
+
 class MyTrueDiv:
     def __init__(self, digit):
         self.digit = digit
 
     def __truediv__(self, other):
-        # if other.digit == 0:
-        #     print('Error')
-        if ZeroDivisionError:
-            print('Error - Деление на ноль недопустимо')
+        if other.digit == 0:
+            raise MyTrueDivError('Test')
         else:
             print(self.digit / other.digit)
 
@@ -134,22 +137,36 @@ print()
 # - Если введён текст, то выводим сообщение и продолжаем работу
 
 
+class MyCheckListError(Exception):
+    def __init__(self, txt):
+        self.txt = txt
+
+
 class CheckList:
     def __init__(self):
         self.list = []
+        # for el in ('25', '87', '90'):
         for el in ('25', '87', '90', 'dsaasd', 'sdfs', 'stop'):
         # while True:
         #     el = input('Test: ')
             if el.upper() == 'STOP':
                 break
             else:
+                # try:
+                #     x = int(el)
+                # except ValueError:
+                #     print('Test')
+                #     continue
+                # else:
+                #     self.list.append(x)
+
                 try:
-                    x = int(el)
-                except ValueError:
-                    print('Test')
-                    continue
+                    if not el.isdigit():
+                        raise MyCheckListError(f'Введённое значение ({el}) не является числом.')
+                except MyCheckListError as error_text:
+                    print(error_text)
                 else:
-                    self.list.append(x)
+                    self.list.append(int(el))
         print(self.list)
 
 
@@ -216,8 +233,6 @@ print()
 print('--- --- Task 4, 5, 6 --- ---')
 print()
 
-from abc import abstractmethod
-
 
 class Stock:
     data_base_header = [
@@ -252,54 +267,36 @@ class Stock:
 
 
 class OfficeEquipment:
-    def __init__(self):
-        print('--- STARTING PROGRAM ---\n')
-        # for el in [3]:
-        while True:
-            self.item = None
-            self.db = None
+    @staticmethod
+    def __init__(__menu_item):
+        if __menu_item == 1:
+            OfficeEquipment.check_item()
+        elif __menu_item == 2:
+            OfficeEquipment.stock_to_department()
+        elif __menu_item == 3:
+            OfficeEquipment.department_to_stock()
+        elif __menu_item == 4:
+            OfficeEquipment.info_hdr()
+        elif __menu_item == 5:
+            OfficeEquipment.info_dtl()
 
-            # self.start = '1'
-            # self.start = str(el)
-            self.start = input('1. Принять новую единицу оргтехники на склад\n'
-                               '2. Передать единицу оргтехники в отдел\n'
-                               '3. Вернуть единицу оргтехники на склад\n'
-                               '4. Посмотреть остаток на складе\n'
-                               '5. Посмотреть детали склада\n'
-                               '\n')
-
-            if self.start == '1':
-                self.check_item()
-            elif self.start == '2':
-                self.stock_to_department()
-            elif self.start == '3':
-                self.department_to_stock()
-            elif self.start == '4':
-                self.info_hdr()
-            elif self.start == '5':
-                self.info_dtl()
-            elif self.start.upper() == 'STOP':
-                break
-            else:
-                print('Ошибка!\n'
-                      'Введите одну из цифр в меню.')
-
-    def check_item(self):
+    @staticmethod
+    def check_item():
         print('--- check_item ---\n')
-        # self.item = 111123
-        self.item = int(input('Введите номер товара: '))
+        # item = 111123
+        item = int(input('Введите номер товара: '))
 
         for el in Stock.data_base_header:
-            if el.get('number') != self.item and el != Stock.data_base_header[-1]:
+            if el.get('number') != item and el != Stock.data_base_header[-1]:
                 continue
-            elif el.get('number') != self.item and el == Stock.data_base_header[-1]:
+            elif el.get('number') != item and el == Stock.data_base_header[-1]:
                 print('Такого товара нет!')
                 msg = input('Внести товар (Y/N)? ')
                 # msg = 'Y'
                 # msg = 'N'
                 if msg.upper() == 'Y':
                     print('\n')
-                    self.new_item()
+                    OfficeEquipment.new_item()
                     break
                 else:
                     print('\n')
@@ -307,10 +304,11 @@ class OfficeEquipment:
             else:
                 print('Товар найден!')
                 print('\n')
-                self.change_quantity(el.get('id'))
+                OfficeEquipment.change_quantity(el.get('id'))
                 break
 
-    def new_item(self):
+    @staticmethod
+    def new_item():
         print('--- new_item ---\n')
         print(Stock.data_base_header[-1])
 
@@ -377,7 +375,8 @@ class OfficeEquipment:
             print(Stock.data_base_detail[-el])
         print('\n')
 
-    def change_quantity(self, id):
+    @staticmethod
+    def change_quantity(id):
         print('--- change_quantity ---\n')
         # quantity = 5
         quantity = int(input('На какое количество изменить количество товара? '))
@@ -388,13 +387,14 @@ class OfficeEquipment:
                 print(el)
         print('\n')
 
-    def stock_to_department(self):
+    @staticmethod
+    def stock_to_department():
         print('--- stock_to_department ---\n')
-        # self.item = 111112
-        self.item = int(input('Введите номер товара: '))
+        # item = 111112
+        item = int(input('Введите номер товара: '))
 
         for el in Stock.data_base_header:
-            if el.get('number') == self.item:
+            if el.get('number') == item:
                 free_stock = el.get('quantity') - el.get('in_use')
                 if free_stock <= 0:
                     print('Нет свободных единиц товара!')
@@ -408,7 +408,7 @@ class OfficeEquipment:
                     # department = 'Sales'
                     department = input('Введите наименование департамента: ')
                     for el in Stock.data_base_detail:
-                        if el.get('number') == self.item and el.get('department') == '':
+                        if el.get('number') == item and el.get('department') == '':
                             print(el)
                             print(f'Выдать товар с инвентаризационным номером: {el.get("inv_number")}')
                             el['department'] = department
@@ -416,7 +416,8 @@ class OfficeEquipment:
                             break
         print('\n')
 
-    def department_to_stock(self):
+    @staticmethod
+    def department_to_stock():
         print('--- department_to_stock ---\n')
         # inv_number = 100003
         inv_number = int(input('Введите инвентаризационный номер: '))
@@ -441,7 +442,8 @@ class OfficeEquipment:
                 print(el)
         print()
 
-    def info_hdr(self):
+    @staticmethod
+    def info_hdr():
         print('--- info_hdr ---\n')
         print(f'|   id   |   number   |   name   |   quantity   |   in_use   |   type   |')
         for el in Stock.data_base_header:
@@ -453,7 +455,8 @@ class OfficeEquipment:
                   f'        {el.get("type")}')
         print('\n')
 
-    def info_dtl(self):
+    @staticmethod
+    def info_dtl():
         print('--- info_dtl ---\n')
         print(f'|   id   |   number   |   inv_number   |   department   |')
         for el in Stock.data_base_detail:
@@ -464,35 +467,31 @@ class OfficeEquipment:
         print('\n')
 
 
-# item = OfficeEquipment()
+def menu():
+    print('\n--- STARTING PROGRAM ---\n')
+    # for el in ['1']:
+    # for el in ['1', '2', '3', '4', '5', 'sdfsdfas', 'stop']:
+    #     menu_item = el
+    while True:
+        menu_item = input(
+            '1. Принять новую единицу оргтехники на склад\n'
+            '2. Передать единицу оргтехники в отдел\n'
+            '3. Вернуть единицу оргтехники на склад\n'
+            '4. Посмотреть остаток на складе\n'
+            '5. Посмотреть детали склада\n'
+            '\n')
+
+        if menu_item in ('1', '2', '3', '4', '5'):
+            OfficeEquipment(int(menu_item))
+        elif menu_item.upper() == 'STOP':
+            print('\n--- ENDING PROGRAM ---\n')
+            break
+        else:
+            print('Ошибка!\n'
+                  'Введите одну из цифр в меню.\n')
 
 
-# class OfficeEquipment:
-#     @abstractmethod
-#     def __init__(self, id, number, name, price, quantity):
-#         self.id = id
-#         self.number = number
-#         self.name = name
-#         self.price = price
-#         self.quantity = quantity
-#
-#
-# class Printer(OfficeEquipment):
-#     def __init__(self, id, number, name, price, quantity, type='Printer'):
-#         super().__init__(id, number, name, price, quantity)
-#         self.type = type
-#
-#
-# class Scanner(OfficeEquipment):
-#     def __init__(self, id, number, name, price, quantity, type='Scanner'):
-#         super().__init__(id, number, name, price, quantity)
-#         self.type = type
-#
-#
-# class Copier(OfficeEquipment):
-#     def __init__(self, id, number, name, price, quantity, type='Copier'):
-#         super().__init__(id, number, name, price, quantity)
-#         self.type = type
+menu()
 
 
 print()
